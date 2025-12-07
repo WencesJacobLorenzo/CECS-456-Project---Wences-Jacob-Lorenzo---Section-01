@@ -31,6 +31,12 @@ def main():
     base_dataset = get_base_dataset(train_loader.dataset)
     num_classes = len(base_dataset.classes)
 
+    # Show that train/val split is consistent
+    print("First 10 indices of train_ds:",
+          train_loader.dataset.indices[:10])
+    print("First 10 indices of val_ds:",
+          val_loader.dataset.indices[:10])
+
     #Build CNN model
     model = build_model(num_classes).to(device)
 
