@@ -2,7 +2,7 @@
 
 ## Chosen Project: [Project Option 4- 10 Animals](https://www.kaggle.com/datasets/alessiocorrado99/animals10)
 
-**Important Note About the Dataset**
+**Important Note About the Dataset**  
 This repository does not include the images in the dataset due to file size limits. However, the required folder structure has been recreated using placeholder files so the code runs correctly after adding the real dataset.
 
 To run the project:
