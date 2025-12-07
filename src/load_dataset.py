@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, random_split, Subset
 
 def resolve_data_dir():
     #Local path in repo
-    default_path = "../data/archive/raw-img"
+    default_path = "./data/archive/raw-img"
 
     #Path used in Google Colab if dataset stored in /content
     colab_path = "/content/data/archive/raw-img"
