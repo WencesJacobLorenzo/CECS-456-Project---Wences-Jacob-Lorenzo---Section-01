@@ -9,7 +9,7 @@ from load_dataset import get_dataloaders
 from model import build_model
 from utils import save_training_curves
 
-EPOCHS = 15 #Update epochs
+EPOCHS = 25 #Update epochs
 BATCH_SIZE = 32
 LR = 0.001
 DEBUG = False  # Set True for fast debugging
