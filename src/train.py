@@ -9,18 +9,16 @@ from load_dataset import get_dataloaders
 from model import build_model
 from utils import save_training_curves
 
-EPOCHS = 10
+EPOCHS = 15 #Update epochs
 BATCH_SIZE = 32
 LR = 0.001
 DEBUG = False  # Set True for fast debugging
-
 
 # Helper function unwrap nested Subsets to reach ImageFolder
 def get_base_dataset(d):
     while hasattr(d, "dataset"):
         d = d.dataset
     return d
-
 
 def main():
     #Use GPU if available
