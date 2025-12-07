@@ -9,12 +9,13 @@ To run the project:
  1. Delete the existing data/archive/ folder (this only contains placeholders).
  2. Download the dataset from the link above.
  3. Replace the dataset's archive/ folder inside the data/ directory, matching this structure:
-    
+   
+```
 data/
-archive/
-raw-img/
-<category1>/
-<category2>/
-<category3>/
-...
+ archive/
+  raw-img/
+   <category1>/
+   <category2>/
+   <category3>/
+   ...
 ```
