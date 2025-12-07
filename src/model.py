@@ -29,7 +29,7 @@ class SimpleCNN(nn.Module):
             nn.Flatten(),
             nn.Linear(128 * 16 * 16, 256),
             nn.ReLU(),
-            nn.Dropout(0.4), #stronger dropout
+            nn.Dropout(0.3),
             nn.Linear(256, num_classes)
         )
 

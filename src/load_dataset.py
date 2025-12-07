@@ -24,10 +24,6 @@ def get_dataloaders(batch_size=32, debug=False):
     #Image transforms (resizing + convert to tensor)
     transform = transforms.Compose([
         transforms.Resize((128, 128)),
-        transforms.RandomHorizontalFlip(p=0.5), #augmenting data
-        transforms.RandomRotation(20),
-        transforms.RandomResizedCrop(128, scale=(0.8, 1.0)),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
         transforms.ToTensor(),
     ])
 
