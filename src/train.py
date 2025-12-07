@@ -9,7 +9,7 @@ from load_dataset import get_dataloaders
 from model import build_model
 from utils import save_training_curves
 
-EPOCHS = 15 #Update epochs
+EPOCHS = 10 #Update epochs
 BATCH_SIZE = 32
 LR = 0.001
 DEBUG = False  # Set True for fast debugging
@@ -116,6 +116,7 @@ def main():
             best_acc = val_acc
             os.makedirs("models", exist_ok=True)
             torch.save(model.state_dict(), "models/best_model.pth")
+
 
     #Save training curves
     os.makedirs("outputs", exist_ok=True)
