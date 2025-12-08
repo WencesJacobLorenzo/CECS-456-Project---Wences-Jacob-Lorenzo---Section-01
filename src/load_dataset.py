@@ -21,7 +21,7 @@ def get_dataloaders(batch_size=32, debug=False):
 
     train_transform = transforms.Compose([
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-        transforms.RandomResizedCrop(128, scale=(0.8, 1.0)),
+        transforms.RandomResizedCrop(160, scale=(0.8, 1.0)),
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(10),
         transforms.ToTensor(),
