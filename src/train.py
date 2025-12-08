@@ -1,4 +1,4 @@
-#Full training script for CNN
+# full training script for CNN
 
 import os
 import torch
@@ -9,66 +9,66 @@ from load_dataset import get_dataloaders
 from model import build_model
 from utils import save_training_curves
 
-EPOCHS = 25 #Update epochs
+EPOCHS = 25  # try 25 with scheduler
 BATCH_SIZE = 32
 LR = 0.001
-DEBUG = False  # Set True for fast debugging
+DEBUG = False  # Set True for quick debugging
 
-# Helper function unwrap nested Subsets to reach ImageFolder
+
 def get_base_dataset(d):
+    # unwrap nested Subsets to reach ImageFolder
     while hasattr(d, "dataset"):
         d = d.dataset
     return d
 
+
 def main():
-    #Use GPU if available
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    #Load training & validation sets
+    # Load training & validation sets
     train_loader, val_loader = get_dataloaders(batch_size=BATCH_SIZE, debug=DEBUG)
 
-    #Count number of classes
+    # Count number of classes
     base_dataset = get_base_dataset(train_loader.dataset)
     num_classes = len(base_dataset.classes)
 
-    # Show that train/val split is consistent
-    print("First 10 indices of train_ds:",
-          train_loader.dataset.indices[:10])
-    print("First 10 indices of val_ds:",
-          val_loader.dataset.indices[:10])
-
-    #Build CNN model
+    # Build CNN model
     model = build_model(num_classes).to(device)
 
-    #Loss and optimizer
+    # Loss and optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
-    #Lists to store curves
+    # Scheduler
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer,
+        mode="min",
+        factor=0.5,
+        patience=2,
+        verbose=True
+    )
+
+    # Lists to store curves
     train_losses = []
     val_losses = []
     val_accuracies = []
 
-    #DEBUG MODE uses 1 training step
     if DEBUG:
-        print("DEBUG MODE: Running one quick batch...")
+        print("DEBUG MODE: Running a single quick batch...")
         model.train()
-
         images, labels = next(iter(train_loader))
         images, labels = images.to(device), labels.to(device)
-
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-
-        print("Debug step finished successfully.")
+        print("Debug step done.")
         return
 
     best_acc = 0.0
 
-    #Training Loop
+    # Training Loop
     for epoch in range(EPOCHS):
 
         model.train()
@@ -88,7 +88,7 @@ def main():
         avg_train_loss = running_loss / len(train_loader)
         train_losses.append(avg_train_loss)
 
-        #Validation Loop
+        # Validation Loop
         model.eval()
         val_loss = 0.0
         correct = 0
@@ -117,19 +117,20 @@ def main():
               f"Val Loss: {avg_val_loss:.4f} | "
               f"Val Acc: {val_acc:.4f}")
 
-        #Save best model
+        # Step scheduler
+        scheduler.step(avg_val_loss)
+
+        # Save best model
         if val_acc > best_acc:
             best_acc = val_acc
             os.makedirs("models", exist_ok=True)
             torch.save(model.state_dict(), "models/best_model.pth")
 
-
-    #Save training curves
+    # Save training curves
     os.makedirs("outputs", exist_ok=True)
     save_training_curves(train_losses, val_losses, val_accuracies)
 
 
 if __name__ == "__main__":
     main()
-
 
