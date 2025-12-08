@@ -21,7 +21,7 @@ def get_dataloaders(batch_size=32, debug=False):
 
     train_transform = transforms.Compose([
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-        transforms.RandomResizedCrop(180, scale=(0.8, 1.0)),
+        transforms.RandomResizedCrop(128, scale=(0.8, 1.0)),
         transforms.RandomHorizontalFlip(),
         transforms.RandomRotation(10),
         transforms.ToTensor(),
@@ -35,7 +35,7 @@ def get_dataloaders(batch_size=32, debug=False):
 
     # Validation transform (NO augmentation)
     val_transform = transforms.Compose([
-        transforms.Resize((180, 180)),
+        transforms.Resize((128, 128)),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],
