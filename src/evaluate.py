@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 from load_dataset import get_dataloaders
 from model import build_model
 
-#Italian to English label translation
+# Italian to English label translation
 translate_labels = {
     "cane": "dog",
     "gatto": "cat",
@@ -28,6 +28,14 @@ def get_base_dataset(d):
     while hasattr(d, "dataset"):
         d = d.dataset
     return d
+
+
+# Denormalize for image display
+def denormalize(img, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]):
+    img = img.clone().cpu()
+    for i in range(3):
+        img[i] = img[i] * std[i] + mean[i]
+    return torch.clamp(img, 0, 1)
 
 
 def main():
@@ -55,7 +63,7 @@ def main():
     first_true = []
     first_pred = []
 
-    #Collect predictions
+    # Collect predictions
     with torch.no_grad():
         for images, labels in val_loader:
             images = images.to(device)
@@ -75,31 +83,40 @@ def main():
                 first_true.extend(labels[:take].cpu().numpy())
                 first_pred.extend(preds[:take].cpu().numpy())
 
-    #Compute confusion matrix
+    # Compute confusion matrix
     cm = confusion_matrix(all_labels, all_preds)
 
-    #Print accuracy
+    # Print accuracy
     accuracy = sum(int(p == t) for p, t in zip(all_preds, all_labels)) / len(all_labels)
-    print(f"\nValidation Accuracy: {accuracy:.4f}")
+    print(f"\nValidation Accuracy: {accuracy:.4f}\n")
 
     # Print first 5 predictions
-    print("\nFirst 5 Predictions:")
+    print("First 5 Predictions:")
     for i in range(len(first_images)):
         print(f"Image {i+1}: True = {class_names[first_true[i]]}, Pred = {class_names[first_pred[i]]}")
 
-    #Save confusion matrix
+    # Save confusion matrix
     os.makedirs("outputs", exist_ok=True)
     plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, cmap="Blues", annot=True, fmt="d", xticklabels=class_names, yticklabels=class_names)
+    sns.heatmap(
+        cm,
+        cmap="Blues",
+        annot=True,
+        fmt="d",
+        xticklabels=class_names,
+        yticklabels=class_names
+    )
     plt.savefig("outputs/confusion_matrix.png")
     plt.close()
 
-    #Save a figure showing the first 5 images and predictions
+    # Save a denormalized visualization of the first 5 images
     plt.figure(figsize=(15, 4))
     for i in range(len(first_images)):
         plt.subplot(1, 5, i+1)
-        img = first_images[i].permute(1, 2, 0).numpy()
+
+        img = denormalize(first_images[i]).permute(1, 2, 0).numpy()
         plt.imshow(img)
+
         plt.title(f"T:{class_names[first_true[i]]}\nP:{class_names[first_pred[i]]}")
         plt.axis("off")
 
