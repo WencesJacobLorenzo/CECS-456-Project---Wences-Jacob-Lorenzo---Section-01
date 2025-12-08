@@ -15,18 +15,26 @@ LR = 0.001
 DEBUG = False  # Set True for quick debugging
 
 
+# Helper function unwrap nested Subsets to reach ImageFolder
 def get_base_dataset(d):
-    # unwrap nested Subsets to reach ImageFolder
     while hasattr(d, "dataset"):
         d = d.dataset
     return d
 
 
 def main():
+    # Use GPU if available
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     # Load training & validation sets
     train_loader, val_loader = get_dataloaders(batch_size=BATCH_SIZE, debug=DEBUG)
+
+    # Stable split check
+    try:
+        print("First 10 indices of train_ds:", train_loader.dataset.indices[:10])
+        print("First 10 indices of val_ds:", val_loader.dataset.indices[:10])
+    except:
+        pass  # Subset may be nested in debug mode
 
     # Count number of classes
     base_dataset = get_base_dataset(train_loader.dataset)
@@ -39,12 +47,13 @@ def main():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
 
-    # Scheduler
+    # Add LR scheduler
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode="min",
         factor=0.5,
         patience=2
+        # older PyTorch does NOT allow verbose=True
     )
 
     # Lists to store curves
@@ -52,8 +61,9 @@ def main():
     val_losses = []
     val_accuracies = []
 
+    # Debug mode
     if DEBUG:
-        print("DEBUG MODE: Running a single quick batch...")
+        print("DEBUG MODE: Running one quick batch...")
         model.train()
         images, labels = next(iter(train_loader))
         images, labels = images.to(device), labels.to(device)
@@ -62,12 +72,12 @@ def main():
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        print("Debug step done.")
+        print("Debug step finished.")
         return
 
     best_acc = 0.0
 
-    # Training Loop
+    # Training loop
     for epoch in range(EPOCHS):
 
         model.train()
@@ -87,7 +97,7 @@ def main():
         avg_train_loss = running_loss / len(train_loader)
         train_losses.append(avg_train_loss)
 
-        # Validation Loop
+        # Validation loop
         model.eval()
         val_loss = 0.0
         correct = 0
@@ -118,6 +128,9 @@ def main():
 
         # Step scheduler
         scheduler.step(avg_val_loss)
+
+        # Optionally print LR drop manually
+        # print("Current LR:", optimizer.param_groups[0]['lr'])
 
         # Save best model
         if val_acc > best_acc:
