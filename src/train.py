@@ -9,10 +9,10 @@ from load_dataset import get_dataloaders
 from model import build_model
 from utils import save_training_curves
 
-EPOCHS = 25  # try 25 with scheduler
+EPOCHS = 25
 BATCH_SIZE = 32
 LR = 0.001
-DEBUG = False  # Set True for quick debugging
+DEBUG = False  # Set True for fast debugging
 
 
 # Helper function unwrap nested Subsets to reach ImageFolder
@@ -23,47 +23,45 @@ def get_base_dataset(d):
 
 
 def main():
-    # Use GPU if available
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # Load training & validation sets
+    # Load data
     train_loader, val_loader = get_dataloaders(batch_size=BATCH_SIZE, debug=DEBUG)
 
-    # Stable split check
+    # ⭐ Print first 10 indices (stable split check)
     try:
         print("First 10 indices of train_ds:", train_loader.dataset.indices[:10])
         print("First 10 indices of val_ds:", val_loader.dataset.indices[:10])
     except:
-        pass  # Subset may be nested in debug mode
+        pass
 
-    # Count number of classes
+    # Count classes
     base_dataset = get_base_dataset(train_loader.dataset)
     num_classes = len(base_dataset.classes)
 
-    # Build CNN model
+    # Build model
     model = build_model(num_classes).to(device)
 
-    # Loss and optimizer
+    # Loss + optimizer
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LR)
+    optimizer = optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
 
-    # Add LR scheduler
+    # Scheduler
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer,
         mode="min",
         factor=0.5,
         patience=2
-        # older PyTorch does NOT allow verbose=True
     )
 
-    # Lists to store curves
+    # Curve tracking
     train_losses = []
     val_losses = []
     val_accuracies = []
 
-    # Debug mode
+    # Debug quick test
     if DEBUG:
-        print("DEBUG MODE: Running one quick batch...")
+        print("DEBUG MODE: Running a single batch...")
         model.train()
         images, labels = next(iter(train_loader))
         images, labels = images.to(device), labels.to(device)
@@ -72,7 +70,7 @@ def main():
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        print("Debug step finished.")
+        print("Debug step complete.")
         return
 
     best_acc = 0.0
@@ -82,6 +80,10 @@ def main():
 
         model.train()
         running_loss = 0.0
+
+        # Add training accuracy counters
+        correct_train = 0
+        total_train = 0
 
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
@@ -94,7 +96,13 @@ def main():
 
             running_loss += loss.item()
 
+            # Compute training accuracy
+            _, train_preds = torch.max(outputs, 1)
+            correct_train += (train_preds == labels).sum().item()
+            total_train += labels.size(0)
+
         avg_train_loss = running_loss / len(train_loader)
+        train_acc = correct_train / total_train
         train_losses.append(avg_train_loss)
 
         # Validation loop
@@ -121,16 +129,13 @@ def main():
         val_losses.append(avg_val_loss)
         val_accuracies.append(val_acc)
 
+        #Print training + validation accuracy
         print(f"Epoch {epoch+1}/{EPOCHS} | "
-              f"Train Loss: {avg_train_loss:.4f} | "
-              f"Val Loss: {avg_val_loss:.4f} | "
-              f"Val Acc: {val_acc:.4f}")
+              f"Train Loss: {avg_train_loss:.4f} | Train Acc: {train_acc:.4f} | "
+              f"Val Loss: {avg_val_loss:.4f} | Val Acc: {val_acc:.4f}")
 
-        # Step scheduler
+        #Step scheduler with validation loss
         scheduler.step(avg_val_loss)
-
-        # Optionally print LR drop manually
-        # print("Current LR:", optimizer.param_groups[0]['lr'])
 
         # Save best model
         if val_acc > best_acc:
@@ -138,11 +143,10 @@ def main():
             os.makedirs("models", exist_ok=True)
             torch.save(model.state_dict(), "models/best_model.pth")
 
-    # Save training curves
+    # Save curves
     os.makedirs("outputs", exist_ok=True)
     save_training_curves(train_losses, val_losses, val_accuracies)
 
 
 if __name__ == "__main__":
     main()
-
