@@ -43,7 +43,7 @@ def main():
     model = build_model(num_classes).to(device)
 
     # Loss + optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
 
     # Scheduler
