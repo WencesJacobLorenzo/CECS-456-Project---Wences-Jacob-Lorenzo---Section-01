@@ -44,7 +44,7 @@ def main():
     # Load validation data
     _, val_loader = get_dataloaders(batch_size=32, debug=False)
 
-    # Get true number of classes
+    # Get class names
     base_dataset = get_base_dataset(val_loader.dataset)
     orig_names = base_dataset.classes
     class_names = [translate_labels[name] for name in orig_names]
@@ -59,6 +59,9 @@ def main():
 
     all_preds = []
     all_labels = []
+
+    # Number of predictions to display
+    N = 20
     first_images = []
     first_true = []
     first_pred = []
@@ -76,12 +79,12 @@ def main():
             all_preds.extend(preds.cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 
-            # Save first 5 examples
-            if len(first_images) < 5:
-                take = 5 - len(first_images)
-                first_images.extend(images[:take].cpu())
-                first_true.extend(labels[:take].cpu().numpy())
-                first_pred.extend(preds[:take].cpu().numpy())
+            # Save first N images
+            if len(first_images) < N:
+                remaining = N - len(first_images)
+                first_images.extend(images[:remaining].cpu())
+                first_true.extend(labels[:remaining].cpu().numpy())
+                first_pred.extend(preds[:remaining].cpu().numpy())
 
     # Compute confusion matrix
     cm = confusion_matrix(all_labels, all_preds)
@@ -90,8 +93,8 @@ def main():
     accuracy = sum(int(p == t) for p, t in zip(all_preds, all_labels)) / len(all_labels)
     print(f"\nValidation Accuracy: {accuracy:.4f}\n")
 
-    # Print first 5 predictions
-    print("First 5 Predictions:")
+    # Print text results
+    print(f"First {len(first_images)} Predictions:")
     for i in range(len(first_images)):
         print(f"Image {i+1}: True = {class_names[first_true[i]]}, Pred = {class_names[first_pred[i]]}")
 
@@ -109,10 +112,13 @@ def main():
     plt.savefig("outputs/confusion_matrix.png")
     plt.close()
 
-    # Save a denormalized visualization of the first 5 images
-    plt.figure(figsize=(15, 4))
+    # Save a grid of the first N predictions
+    cols = 5
+    rows = (len(first_images) + cols - 1) // cols
+
+    plt.figure(figsize=(15, 3 * rows))
     for i in range(len(first_images)):
-        plt.subplot(1, 5, i+1)
+        plt.subplot(rows, cols, i + 1)
 
         img = denormalize(first_images[i]).permute(1, 2, 0).numpy()
         plt.imshow(img)
@@ -120,7 +126,7 @@ def main():
         plt.title(f"T:{class_names[first_true[i]]}\nP:{class_names[first_pred[i]]}")
         plt.axis("off")
 
-    plt.savefig("outputs/first5_predictions.png")
+    plt.savefig("outputs/first_predictions_grid.png")
     plt.close()
 
 
