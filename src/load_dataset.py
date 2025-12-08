@@ -20,6 +20,9 @@ def get_dataloaders(batch_size=32, debug=False):
     # Data augmentation + transforms
     transform = transforms.Compose([
         transforms.Resize((128, 128)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(10),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2),
         transforms.ToTensor(),
     ])
 
