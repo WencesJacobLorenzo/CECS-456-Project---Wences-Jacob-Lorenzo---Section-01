@@ -15,7 +15,7 @@ LR = 0.001
 DEBUG = False  # Set True for fast debugging
 
 
-# Helper function unwrap nested Subsets to reach ImageFolder
+# Helper: unwrap nested Subsets to reach ImageFolder
 def get_base_dataset(d):
     while hasattr(d, "dataset"):
         d = d.dataset
@@ -28,7 +28,7 @@ def main():
     # Load data
     train_loader, val_loader = get_dataloaders(batch_size=BATCH_SIZE, debug=DEBUG)
 
-    # ⭐ Print first 10 indices (stable split check)
+    # Print first 10 indices (stable split confirmation)
     try:
         print("First 10 indices of train_ds:", train_loader.dataset.indices[:10])
         print("First 10 indices of val_ds:", val_loader.dataset.indices[:10])
@@ -57,11 +57,12 @@ def main():
     # Curve tracking
     train_losses = []
     val_losses = []
+    train_accuracies = []
     val_accuracies = []
 
     # Debug quick test
     if DEBUG:
-        print("DEBUG MODE: Running a single batch...")
+        print("DEBUG MODE: Running one quick batch...")
         model.train()
         images, labels = next(iter(train_loader))
         images, labels = images.to(device), labels.to(device)
@@ -70,7 +71,7 @@ def main():
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        print("Debug step complete.")
+        print("Debug step finished.")
         return
 
     best_acc = 0.0
@@ -81,7 +82,6 @@ def main():
         model.train()
         running_loss = 0.0
 
-        # Add training accuracy counters
         correct_train = 0
         total_train = 0
 
@@ -96,16 +96,18 @@ def main():
 
             running_loss += loss.item()
 
-            # Compute training accuracy
+            # Training accuracy
             _, train_preds = torch.max(outputs, 1)
             correct_train += (train_preds == labels).sum().item()
             total_train += labels.size(0)
 
         avg_train_loss = running_loss / len(train_loader)
         train_acc = correct_train / total_train
-        train_losses.append(avg_train_loss)
 
-        # Validation loop
+        train_losses.append(avg_train_loss)
+        train_accuracies.append(train_acc)
+
+        # ----- Validation loop -----
         model.eval()
         val_loss = 0.0
         correct = 0
@@ -129,12 +131,14 @@ def main():
         val_losses.append(avg_val_loss)
         val_accuracies.append(val_acc)
 
-        #Print training + validation accuracy
-        print(f"Epoch {epoch+1}/{EPOCHS} | "
-              f"Train Loss: {avg_train_loss:.4f} | Train Acc: {train_acc:.4f} | "
-              f"Val Loss: {avg_val_loss:.4f} | Val Acc: {val_acc:.4f}")
+        # Print metrics for the epoch
+        print(
+            f"Epoch {epoch+1}/{EPOCHS} | "
+            f"Train Loss: {avg_train_loss:.4f} | Train Acc: {train_acc:.4f} | "
+            f"Val Loss: {avg_val_loss:.4f} | Val Acc: {val_acc:.4f}"
+        )
 
-        #Step scheduler with validation loss
+        # Step scheduler based on validation loss
         scheduler.step(avg_val_loss)
 
         # Save best model
@@ -143,9 +147,9 @@ def main():
             os.makedirs("models", exist_ok=True)
             torch.save(model.state_dict(), "models/best_model.pth")
 
-    # Save curves
+    # Save training curves
     os.makedirs("outputs", exist_ok=True)
-    save_training_curves(train_losses, val_losses, val_accuracies)
+    save_training_curves(train_losses, val_losses, train_accuracies, val_accuracies)
 
 
 if __name__ == "__main__":
