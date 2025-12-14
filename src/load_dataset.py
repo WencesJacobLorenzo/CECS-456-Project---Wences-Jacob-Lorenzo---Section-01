@@ -18,6 +18,7 @@ def resolve_data_dir():
 def get_dataloaders(batch_size=32, debug=False):
     data_dir = resolve_data_dir()
 
+    # Image augmentation for better generalization
     train_transform = transforms.Compose([
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
         transforms.RandomResizedCrop(128, scale=(0.8, 1.0)),
