@@ -1,4 +1,3 @@
-# load_dataset.py
 # Load images and creates training and validation sets
 
 import os
@@ -33,7 +32,7 @@ def get_dataloaders(batch_size=32, debug=False):
         ),
     ])
 
-    # Validation transform (NO augmentation)
+    # Validation transform
     val_transform = transforms.Compose([
         transforms.Resize((128, 128)),
         transforms.ToTensor(),
@@ -43,7 +42,7 @@ def get_dataloaders(batch_size=32, debug=False):
         ),
     ])
 
-    # Load dataset without transforms (so transforms apply AFTER split)
+    # Load dataset without transforms (transforms remain after split)
     full_dataset = datasets.ImageFolder(data_dir)
 
     # Debug shrink

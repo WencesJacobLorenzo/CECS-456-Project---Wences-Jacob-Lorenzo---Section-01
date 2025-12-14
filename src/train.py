@@ -1,4 +1,4 @@
-# full training script for CNN
+# Full training script for CNN
 
 import os
 import torch
@@ -15,7 +15,7 @@ LR = 0.001
 DEBUG = False  # Set True for fast debugging
 
 
-# Helper: unwrap nested Subsets to reach ImageFolder
+# Helper function unwraps nested Subsets to reach ImageFolder
 def get_base_dataset(d):
     while hasattr(d, "dataset"):
         d = d.dataset
