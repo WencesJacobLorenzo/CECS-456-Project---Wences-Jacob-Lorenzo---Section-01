@@ -21,7 +21,7 @@ Before running the training or evaluation scripts, the data must be set up corre
 ### Dataset Preparation
  1. Delete the existing data/archive/ folder (this only contains placeholders).
  2. Download the dataset from the link above.
- 3. Replace the dataset's archive/ folder inside the data/ directory, matching this structure:
+ 3. Replace the dataset's archive/ folder inside the data/ directory, matching this structure **MAKE SURE ARCHIVE IS UNZIPPED**:
    
 ```
 data/
