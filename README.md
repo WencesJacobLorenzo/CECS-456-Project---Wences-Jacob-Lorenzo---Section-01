@@ -6,10 +6,10 @@
 This repository does not include the images in the dataset due to file size limits. However, the required folder structure has been recreated using placeholder files so the code runs correctly after adding the real dataset.
 
 ## CNN for Animal Classification
-This project impkements a Convolutional Neural Network (CNN) fir 10-class animal image classification with the above Anials-10 dataset. The model is trained using a supervised learning approach with data augmentation, regularization, and adaptive learning-rate scheduling. Evaluation includes both quantitatie and qualitative assessment.
+This project implements a Convolutional Neural Network (CNN) for 10-class animal image classification with the above Animals-10 dataset. The model is trained using a supervised learning approach with data augmentation, regularization, and adaptive learning-rate scheduling. Evaluation includes both quantitative and qualitative assessment.
 
 ## Requirements
-- This project requries Python 3.8 or higher with dependencies listed in **requirements.txt**
+- This project requires Python 3.8 or higher with dependencies listed in **requirements.txt**
 - Install dependencies using:
   ```
   pip install -r requirements.txt
@@ -46,7 +46,7 @@ During training:
 - The model is trained for 30 epochs using the training dataset
 - Validation accuracy and loss is evaluated after each epoch
 - The best-performing model checkpoint is saved to **models/best_model.pth**
-- Training and validation curves are saved to *outputs/training_curves.png**
+- Training and validation curves are saved to **outputs/training_curves.png**
 - **This process may take a while depending on available hardware. Using GPU runtime in Google Colab can be halpful.**
 
 **NOTE:** If you decide to train the model from scratch, you may optionally delete the existing **models/best_model.pth** file before running **train.py** to avoid any confusion with previously saved checkpoints. The training script will automatically save a new best-performing model.
