@@ -45,7 +45,7 @@ During training:
 - Validation accuracy and loss is evaluated after each epoch
 - The best-performing model checkpoint is saved to **models/best_model.pth**
 - Training and validation curves are saved to *outputs/training_curves.png**
-- This process may take several minutes depending on available hardware. Using GPU runtime in Google Colab can be halpful.
+- **This process may take a while depending on available hardware. Using GPU runtime in Google Colab can be halpful.**
 
 **NOTE:** If you decide to train the model from scratch, you may optionally delete the existing **models/best_model.pth** file before running **train.py** to avoid any confusion with previously saved checkpoints. The training script will automatically save a new best-performing model.
 
