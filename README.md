@@ -1,12 +1,31 @@
 # CECS-456-Project---Wences-Jacob-Lorenzo---Section-01
 
-## Chosen Project: [Project Option 4- 10 Animals](https://www.kaggle.com/datasets/alessiocorrado99/animals10)
+## Chosen Project: [Project Option 4 - 10 Animals](https://www.kaggle.com/datasets/alessiocorrado99/animals10)
 
 **Important Note About the Dataset**  
 This repository does not include the images in the dataset due to file size limits. However, the required folder structure has been recreated using placeholder files so the code runs correctly after adding the real dataset.
 
 ## CNN for Animal Classification
 This project implements a Convolutional Neural Network (CNN) for 10-class animal image classification with the above Animals-10 dataset. The model is trained using a supervised learning approach with data augmentation, regularization, and adaptive learning-rate scheduling. Evaluation includes both quantitative and qualitative assessment.
+
+## Folders
+This repository is organized into several folsers to clearly separate the source code, dataset, model outputs, and generated results
+- **src/** - Contains all Python source code for the model and training pipeline
+  - load_datasets.py - Loads images, applies transformations, and creates training/validation data
+  - model.py - Defines the CNN architecture
+  - train.py - Full training script running epoch, logs metrics, and saves the best model
+  - evaluate.py - Loads the trained model and generates evaluation outputs like confusion matrix and example predictions
+  - utils.py - Helper functions that save training curves
+    
+- **data/** - Contains dataset used for training and validation. **Note:** The repo includes placeholder files only. You must download and insert the real dataset before training. Setup instructions are shown later in README
+
+- **models/** - Stores trained model weights. This folder is created automatically after training if it does not exist.
+   - best_model.pth - THe highest-acuracy model checkpoint saved during training.
+
+- **outputs/** - Stores generated visualization and evaluation results. This folder is also auto-created if it does not exist.
+  - training_curves.png - Plot of training/valifation loss and accuracy over epochs
+  - confusion_matrix.png - Confusion matrix for model predictions on the validation set
+  - first5_predictions.png - Name mismatch. This actually shows sample predictions on the first 20 validation images.
 
 ## Requirements
 - This project requires Python 3.8 or higher with dependencies listed in **requirements.txt**
