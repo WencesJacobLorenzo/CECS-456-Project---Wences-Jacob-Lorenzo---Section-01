@@ -19,9 +19,9 @@ This project impkements a Convolutional Neural Network (CNN) fir 10-class animal
 Before running the training or evaluation scripts, the data must be set up correctly.
 
 ### Dataset Preparation
- 1. Delete the existing data/archive/ folder (this only contains placeholders).
+ 1. Delete the existing **archive/** folder (this only contains placeholders).
  2. Download the dataset from the link above.
- 3. Replace the dataset's archive/ folder inside the data/ directory, matching this structure **MAKE SURE ARCHIVE IS UNZIPPED**:
+ 3. Replace the dataset's **archive/** folder inside the data/ directory, matching this structure:
    
 ```
 data/
@@ -32,12 +32,14 @@ data/
    <category3>/
    ...
 ```
-Once the dataset is placed in this structure, you may proceed with training the model from scratch or running evaluation using the provided **best_model.pth** checkpoint.
+  4. Make sure **archive/** folder is unzipped. Unzip if needed.
+
+Once the dataset is placed in this structure and archive/ is unzipped, you may proceed with training the model from scratch or running evaluation using the provided **best_model.pth** checkpoint.
 
 ### Training the Model from Scratch
 To train the CNN from scratch and generate a new model checkpoint, run:
 ```
-python train.py
+python src/train.py
 ```
 
 During training:
@@ -52,7 +54,7 @@ During training:
 ### Evaluation with Pretrained Model
 If you want to evaluate the model without retraining, you can run the evaluation with the given checkpoint:
 ```
-python evaluate.py
+python src/evaluate.py
 ```
 
 This script:
