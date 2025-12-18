@@ -25,7 +25,7 @@ This repository is organized into several folsers to clearly separate the source
 - **outputs/** - Stores generated visualization and evaluation results. This folder is also auto-created if it does not exist.
   - training_curves.png - Plot of training/valifation loss and accuracy over epochs
   - confusion_matrix.png - Confusion matrix for model predictions on the validation set
-  - first5_predictions.png - Name mismatch. This actually shows sample predictions on the first 20 validation images.
+  - first_predictions_grid.png - Grid showing sample predictions on the first 20 validation images.
 
 ## Requirements
 - This project requires Python 3.8 or higher with dependencies listed in **requirements.txt**
