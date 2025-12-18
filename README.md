@@ -17,7 +17,7 @@ This repository is organized into several folsers to clearly separate the source
   - evaluate.py - Loads the trained model and generates evaluation outputs like confusion matrix and example predictions
   - utils.py - Helper functions that save training curves
     
-- **data/** - Contains dataset used for training and validation. **Note:** The repo includes placeholder files only. You must download and insert the real dataset before training. Setup instructions are shown later in README
+- **data/** - Contains dataset used for training and validation. **Note:** The repo includes placeholder files only. You must download and insert the real dataset before training. Setup instructions are shown later in README under **Dataset Preparation**
 
 - **models/** - Stores trained model weights. This folder is created automatically after training if it does not exist.
    - best_model.pth - THe highest-acuracy model checkpoint saved during training.
