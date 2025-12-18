@@ -56,7 +56,7 @@ python evaluate.py
 ```
 
 This script:
-- Loads the saved model from models/best_model.pth
+- Loads the saved model from **models/best_model.pth**
 - Perform inference on the validation dataset
 - Print the verall validation accuracy
 - Generate evaluation outputs including **outputs/confusion_matrix.png** and **outputs/first_predictions_grid.png**
